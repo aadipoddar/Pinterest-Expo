@@ -1,2 +1,3 @@
 # Pinterest-Expo
-Pinterest Clone with Expo
+
+## Pinterest Clone with Expo
