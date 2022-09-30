@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
-const Pin = (props) => {
+export default function Pin(props) {
   const { id, image, title } = props.pin;
 
   const [ratio, setRatio] = useState(1);
@@ -41,7 +41,7 @@ const Pin = (props) => {
       </Text>
     </Pressable>
   );
-};
+}
 
 const styles = StyleSheet.create({
   pin: {
@@ -67,5 +67,3 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
 });
-
-export default Pin;

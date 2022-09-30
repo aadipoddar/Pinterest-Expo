@@ -10,7 +10,7 @@ import {
 import pins from "../assets/data/pins";
 import { Text, View } from "../components/Themed";
 
-const PinScreen = () => {
+export default function PinScreen() {
   const [ratio, setRatio] = useState(1);
   const navigation = useNavigation();
   const route = useRoute();
@@ -51,7 +51,7 @@ const PinScreen = () => {
       </Pressable>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -76,5 +76,3 @@ const styles = StyleSheet.create({
     left: 10,
   },
 });
-
-export default PinScreen;
