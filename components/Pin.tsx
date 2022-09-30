@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "./Themed";
 
-export default function Pin(props) {
+export default function Pin(props: any) {
   const { id, image, title } = props.pin;
 
   const [ratio, setRatio] = useState(1);
