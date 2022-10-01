@@ -28,6 +28,7 @@ const GET_PIN_QUERY = `
 export default function PinScreen() {
   const [ratio, setRatio] = useState(1);
   const [pin, setPin] = useState(null);
+  const [imageUri, setImageUri] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
@@ -42,14 +43,26 @@ export default function PinScreen() {
     else setPin(response.data.pins_by_pk);
   };
 
+  const fetchImage = async () => {
+    const result = await nhost.storage.getPresignedUrl({
+      fileId: pin.image,
+    });
+
+    if (result.presignedUrl?.url) setImageUri(result.presignedUrl.url);
+  };
+
   useEffect(() => {
     fetchPin(pinId);
   }, [pinId]);
 
   useEffect(() => {
-    if (pin?.image)
-      Image.getSize(pin.image, (width, height) => setRatio(width / height));
+    fetchImage();
   }, [pin]);
+
+  useEffect(() => {
+    if (imageUri)
+      Image.getSize(imageUri, (width, height) => setRatio(width / height));
+  }, [imageUri]);
 
   const goBack = () => {
     navigation.goBack();
@@ -62,7 +75,7 @@ export default function PinScreen() {
       <StatusBar style="light" />
       <View style={styles.root}>
         <Image
-          source={{ uri: pin.image }}
+          source={{ uri: imageUri }}
           style={[styles.image, { aspectRatio: ratio }]}
         />
 
