@@ -1,5 +1,6 @@
 import { Entypo, Feather } from "@expo/vector-icons";
-import { Image, ScrollView, StyleSheet } from "react-native";
+import { useSignOut } from "@nhost/react";
+import { Image, Pressable, ScrollView, StyleSheet } from "react-native";
 import pins from "../assets/data/pins";
 import MasonryList from "../components/MasonryList";
 
@@ -8,17 +9,21 @@ import useColorScheme from "../hooks/useColorScheme";
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme();
+  const { signOut } = useSignOut();
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.icons}>
-          <Feather
-            name="share"
-            size={24}
-            color={colorScheme === "dark" ? "white" : "black"}
-            style={styles.icon}
-          />
+          <Pressable onPress={signOut}>
+            <Feather
+              name="share"
+              size={24}
+              color={colorScheme === "dark" ? "white" : "black"}
+              style={styles.icon}
+            />
+          </Pressable>
+
           <Entypo
             name="dots-three-horizontal"
             size={24}
