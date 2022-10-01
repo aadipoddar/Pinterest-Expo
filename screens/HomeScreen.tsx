@@ -6,8 +6,11 @@ import MasonryList from "../components/MasonryList";
 export default function HomeScreen() {
   const nhost = useNhostClient();
   const [pins, setPins] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchPins = async () => {
+    setLoading(true);
+
     const response = await nhost.graphql.request(`
     query MyQuery {
       pins {
@@ -22,11 +25,13 @@ export default function HomeScreen() {
 
     if (response.error) Alert.alert("Error Fetching Pins");
     else setPins(response.data.pins);
+
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchPins();
   }, []);
 
-  return <MasonryList pins={pins} />;
+  return <MasonryList pins={pins} onRefresh={fetchPins} refreshing={loading} />;
 }

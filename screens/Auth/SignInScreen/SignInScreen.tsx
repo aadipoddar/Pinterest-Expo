@@ -7,9 +7,9 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import Logo from "./logo.png";
+//@ts-ignore
+import Logo from "../../../assets/images/logo.png";
 import CustomButton from "../components/CustomButton";
-import SocialSignInButtons from "../components/SocialSignInButtons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { useNhostClient } from "@nhost/react";
@@ -28,12 +28,8 @@ const SignInScreen = () => {
     if (result.error) Alert.alert("Error Signing in", result.error.message);
   };
 
-  const onForgotPasswordPressed = () => {
-    console.warn("Forgot password");
-  };
-
   const onSignUpPress = () => {
-    navigation.navigate("Sign up");
+    navigation.navigate("SignUp");
   };
 
   return (
@@ -61,14 +57,6 @@ const SignInScreen = () => {
         />
 
         <CustomButton text="Sign In" onPress={onSignInPressed} />
-
-        <CustomButton
-          text="Forgot password?"
-          onPress={onForgotPasswordPressed}
-          type="TERTIARY"
-        />
-
-        <SocialSignInButtons />
 
         <CustomButton
           text="Don't have an account? Create one"

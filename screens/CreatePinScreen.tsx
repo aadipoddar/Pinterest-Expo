@@ -55,6 +55,7 @@ export default function CreatePinScreen() {
     const uri =
       Platform.OS === "ios" ? imageUri.replace("file://", "") : imageUri;
 
+    //@ts-ignore
     const result = await nhost.storage.upload({
       file: {
         name,

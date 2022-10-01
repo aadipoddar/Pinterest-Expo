@@ -1,6 +1,5 @@
 import { StyleSheet, ScrollView, TextInput, Alert } from "react-native";
 import CustomButton from "../components/CustomButton";
-import SocialSignInButtons from "../components/SocialSignInButtons";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 import Colors from "../../../constants/Colors";
@@ -26,19 +25,11 @@ const SignUpScreen = () => {
     });
 
     if (result.error) Alert.alert("Error Signing Up", result.error.message);
-    else navigation.navigate("Sign in");
+    else navigation.navigate("SignIn");
   };
 
   const onSignInPress = () => {
-    navigation.navigate("Sign in");
-  };
-
-  const onTermsOfUsePressed = () => {
-    console.warn("onTermsOfUsePressed");
-  };
-
-  const onPrivacyPressed = () => {
-    console.warn("onPrivacyPressed");
+    navigation.navigate("SignIn");
   };
 
   return (
@@ -69,19 +60,6 @@ const SignUpScreen = () => {
         />
 
         <CustomButton text="Register" onPress={onRegisterPressed} />
-
-        <Text style={styles.text}>
-          By registering, you confirm that you accept our{" "}
-          <Text style={styles.link} onPress={onTermsOfUsePressed}>
-            Terms of Use
-          </Text>{" "}
-          and{" "}
-          <Text style={styles.link} onPress={onPrivacyPressed}>
-            Privacy Policy
-          </Text>
-        </Text>
-
-        <SocialSignInButtons />
 
         <CustomButton
           text="Have an account? Sign in"

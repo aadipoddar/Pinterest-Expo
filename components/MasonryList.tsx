@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import Pin from "./Pin";
 import { View } from "./Themed";
 
@@ -9,15 +14,26 @@ interface IMasonryList {
     image: string;
     title: string;
   }[];
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
-export default function MasonryList({ pins }: IMasonryList) {
+export default function MasonryList({
+  pins,
+  refreshing = false,
+  onRefresh = () => {},
+}: IMasonryList) {
   const width = useWindowDimensions().width;
 
   const numColumns = Math.ceil(width / 350);
 
   return (
-    <ScrollView contentContainerStyle={{ width: "100%" }}>
+    <ScrollView
+      contentContainerStyle={{ width: "100%" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.container}>
         {Array.from(Array(numColumns)).map((_, colIndex) => (
           <View style={styles.column} key={`column_${colIndex}`}>

@@ -3,11 +3,12 @@ import { useNhostClient } from "@nhost/react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Alert, Image, Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import RemoteImage from "../components/RemoteImage";
 import { Text, View } from "../components/Themed";
 
 const GET_PIN_QUERY = `
@@ -26,9 +27,7 @@ const GET_PIN_QUERY = `
     `;
 
 export default function PinScreen() {
-  const [ratio, setRatio] = useState(1);
   const [pin, setPin] = useState(null);
-  const [imageUri, setImageUri] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
@@ -43,26 +42,9 @@ export default function PinScreen() {
     else setPin(response.data.pins_by_pk);
   };
 
-  const fetchImage = async () => {
-    const result = await nhost.storage.getPresignedUrl({
-      fileId: pin.image,
-    });
-
-    if (result.presignedUrl?.url) setImageUri(result.presignedUrl.url);
-  };
-
   useEffect(() => {
     fetchPin(pinId);
   }, [pinId]);
-
-  useEffect(() => {
-    fetchImage();
-  }, [pin]);
-
-  useEffect(() => {
-    if (imageUri)
-      Image.getSize(imageUri, (width, height) => setRatio(width / height));
-  }, [imageUri]);
 
   const goBack = () => {
     navigation.goBack();
@@ -73,12 +55,9 @@ export default function PinScreen() {
   return (
     <SafeAreaView style={{ backgroundColor: "black" }}>
       <StatusBar style="light" />
-      <View style={styles.root}>
-        <Image
-          source={{ uri: imageUri }}
-          style={[styles.image, { aspectRatio: ratio }]}
-        />
 
+      <View style={styles.root}>
+        <RemoteImage fileId={pin.image} />
         <Text style={styles.title}>{pin.title}</Text>
       </View>
 
@@ -95,11 +74,6 @@ export default function PinScreen() {
 const styles = StyleSheet.create({
   root: {
     height: "100%",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-  },
-  image: {
-    width: "100%",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
   },

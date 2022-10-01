@@ -8,11 +8,11 @@ const AuthStackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Sign in"
+        name="SignIn"
         component={SignInScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Sign up" component={SignUpScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
     </Stack.Navigator>
   );
 };
