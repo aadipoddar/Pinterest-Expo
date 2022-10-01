@@ -1,15 +1,52 @@
 import { Entypo, Feather } from "@expo/vector-icons";
-import { useSignOut } from "@nhost/react";
-import { Image, Pressable, ScrollView, StyleSheet } from "react-native";
-import pins from "../assets/data/pins";
+import { useNhostClient, useSignOut, useUserId } from "@nhost/react";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import MasonryList from "../components/MasonryList";
 
 import { Text, View } from "../components/Themed";
 import useColorScheme from "../hooks/useColorScheme";
 
+const GET_USER_QUERY = `
+query MyQuery($id: uuid!) {
+  user(id: $id) {
+    id
+    avatarUrl
+    displayName
+    pins {
+      id
+      image
+      title
+    }
+  }
+}
+`;
+
 export default function ProfileScreen() {
+  const [user, setUser] = useState();
   const colorScheme = useColorScheme();
   const { signOut } = useSignOut();
+  const userId = useUserId();
+  const nhost = useNhostClient();
+
+  const fetchUserData = async () => {
+    const result = await nhost.graphql.request(GET_USER_QUERY, { id: userId });
+    if (result.error) Alert.alert("Error Fetching User");
+    else setUser(result.data.user);
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  });
+
+  if (!user) return <ActivityIndicator />;
 
   return (
     <ScrollView style={styles.container}>
@@ -34,16 +71,18 @@ export default function ProfileScreen() {
 
         <Image
           source={{
-            uri: "https://avatars.githubusercontent.com/u/83405769?s=400&u=515f7889a3ddb7b9ba526babd23d28db28bdd8f2&v=4",
+            uri: "https://cdn-icons-png.flaticon.com/512/145/145808.png",
           }}
           style={styles.image}
         />
 
-        <Text style={styles.title}>Aadi Poddar</Text>
+        {/* @ts-ignore */}
+        <Text style={styles.title}>{user.displayName}</Text>
         <Text style={styles.subtitle}>123 Followers | 534 Following</Text>
       </View>
 
-      <MasonryList pins={pins} />
+      {/* @ts-ignore */}
+      <MasonryList pins={user.pins} onRefresh={fetchUserData} />
     </ScrollView>
   );
 }
