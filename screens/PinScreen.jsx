@@ -3,7 +3,7 @@ import { useNhostClient } from "@nhost/react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
+import { Alert, Image, Pressable, StyleSheet } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,

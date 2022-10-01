@@ -1,13 +1,38 @@
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, TextInput } from "react-native";
+import {
+  Alert,
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import { Text, View } from "../components/Themed";
 import * as ImagePicker from "expo-image-picker";
 import useColorScheme from "../hooks/useColorScheme";
+import { useNhostClient } from "@nhost/react";
+import { useNavigation } from "@react-navigation/native";
+
+const CREATE_PIN_MUTATION = `
+mutation MyMutation ($image: String!, $title: String) {
+  insert_pins(objects: {image: $image, title: $title}) {
+    returning {
+      created_at
+      id
+      image
+      title
+      user_id
+    }
+  }
+}
+`;
 
 export default function CreatePinScreen() {
-  const [image, setImage] = useState(null);
+  const [imageUri, setImageUri] = useState<null | string>(null);
   const [title, setTitle] = useState("");
   const colorScheme = useColorScheme();
+  const nhost = useNhostClient();
+  const navigation = useNavigation();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -16,12 +41,47 @@ export default function CreatePinScreen() {
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
+    if (!result.cancelled) setImageUri(result.uri);
   };
 
-  const onSubmit = () => {};
+  const uploadFile = async () => {
+    if (!imageUri) return { error: { message: "No image selected" } };
+
+    const parts = imageUri.split("/");
+    const name = parts[parts.length - 1];
+    const nameParts = name.split(".");
+    const extension = nameParts[nameParts.length - 1];
+
+    const uri =
+      Platform.OS === "ios" ? imageUri.replace("file://", "") : imageUri;
+
+    const result = await nhost.storage.upload({
+      file: {
+        name,
+        type: `image/${extension}`,
+        uri,
+      },
+    });
+
+    return result;
+  };
+
+  const onSubmit = async () => {
+    const uploadResult = await uploadFile();
+
+    if (uploadResult.error) {
+      Alert.alert("Error uploading the Image");
+      return;
+    }
+
+    const result = await nhost.graphql.request(CREATE_PIN_MUTATION, {
+      title,
+      image: uploadResult.fileMetadata.id,
+    });
+
+    if (result.error) Alert.alert("Error creating the Post");
+    else navigation.goBack();
+  };
 
   return (
     <View style={styles.root}>
@@ -31,9 +91,9 @@ export default function CreatePinScreen() {
         </Text>
       </Pressable>
 
-      {image && (
+      {imageUri && (
         <>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: imageUri }} style={styles.image} />
           <TextInput
             placeholder="Title..."
             value={title}
