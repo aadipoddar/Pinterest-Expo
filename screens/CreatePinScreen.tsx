@@ -26,7 +26,9 @@ export default function CreatePinScreen() {
   return (
     <View style={styles.root}>
       <Pressable onPress={pickImage}>
-        <Text style={{ fontWeight: "bold" }}>Upload Your Pin</Text>
+        <Text style={{ fontWeight: "bold", color: "#2f95dc" }}>
+          Upload Your Pin
+        </Text>
       </Pressable>
 
       {image && (
@@ -44,7 +46,9 @@ export default function CreatePinScreen() {
           />
 
           <Pressable onPress={onSubmit}>
-            <Text style={{ fontWeight: "bold" }}>Submit Your Pin</Text>
+            <Text style={{ fontWeight: "bold", color: "#2f95dc" }}>
+              Submit Your Pin
+            </Text>
           </Pressable>
         </>
       )}
