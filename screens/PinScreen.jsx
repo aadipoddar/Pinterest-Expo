@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useNhostClient } from "@nhost/react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -7,18 +8,43 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import pins from "../assets/data/pins";
 import { Text, View } from "../components/Themed";
+
+const GET_PIN_QUERY = `
+    query MyQuery ($id: uuid!) {
+      pins_by_pk(id: $id) {
+        created_at
+        id
+        image
+        title
+        user {
+          avatarUrl
+          displayName
+        }
+      }
+    }
+    `;
 
 export default function PinScreen() {
   const [ratio, setRatio] = useState(1);
+  const [pin, setPin] = useState(null);
   const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
+  const nhost = useNhostClient();
 
   const pinId = route.params?.id;
 
-  const pin = pins.find((p) => p.id === pinId);
+  const fetchPin = async (pinId) => {
+    const response = await nhost.graphql.request(GET_PIN_QUERY, { id: pinId });
+
+    if (response.error) Alert.alert("Error Fetching Pins");
+    else setPin(response.data.pins_by_pk);
+  };
+
+  useEffect(() => {
+    fetchPin(pinId);
+  }, [pinId]);
 
   useEffect(() => {
     if (pin?.image)
